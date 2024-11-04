@@ -30,7 +30,7 @@ output "primary_access_key" {
   description = "The Primary access key of the Storage Account."
   sensitive   = true
 }
-/*
+
 output "container_ids" {
   value       = [for c in azurerm_storage_container.this : c.id]
   description = "The generated IDs for the Containers."

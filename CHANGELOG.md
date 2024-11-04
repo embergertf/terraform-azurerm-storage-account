@@ -13,6 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed -->
 
+## [1.1.0] - 2024-11-03 - Updated module version + added outputs
+
+### Added
+
+- Outputs for `containers`, `blobs`, `queues`, `file_shares`, `tables`
+
+### Modified
+
+- Version constraint on module `module` `"st_on_kv_ra"` (Role assignments)
+
 ## [1.0.0] - 2024-11-03 - Module Creation
 
 ### Added
