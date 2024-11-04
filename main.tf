@@ -115,7 +115,7 @@ resource "azurerm_key_vault_secret" "this" {
 #-------------------------------------------------------------------------------------------------
 module "st_on_kv_ra" {
   source  = "app.terraform.io/embergertf/role-assignment/azurerm"
-  version = "1.0.0"
+  version = "~> 1.0"
 
   count = var.cmk_enabled == true ? 1 : 0
 

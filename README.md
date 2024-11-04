@@ -56,7 +56,7 @@ module "st" {
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_st_name"></a> [st\_name](#module\_st\_name) | app.terraform.io/embergertf/base/azurerm | ~> 4.0 |
-| <a name="module_st_on_kv_ra"></a> [st\_on\_kv\_ra](#module\_st\_on\_kv\_ra) | app.terraform.io/embergertf/role-assignment/azurerm | 1.0.0 |
+| <a name="module_st_on_kv_ra"></a> [st\_on\_kv\_ra](#module\_st\_on\_kv\_ra) | app.terraform.io/embergertf/role-assignment/azurerm | ~> 1.0 |
 
 ### Inputs
 
@@ -114,11 +114,17 @@ module "st" {
 
 | Name | Description |
 |------|-------------|
+| <a name="output_blob_ids"></a> [blob\_ids](#output\_blob\_ids) | The generated IDs for the Blobs. |
+| <a name="output_blob_urls"></a> [blob\_urls](#output\_blob\_urls) | The generated URLs of the Blobs. |
+| <a name="output_container_ids"></a> [container\_ids](#output\_container\_ids) | The generated IDs for the Containers. |
+| <a name="output_file_share_ids"></a> [file\_share\_ids](#output\_file\_share\_ids) | The generated IDs of the File shares. |
+| <a name="output_file_share_urls"></a> [file\_share\_urls](#output\_file\_share\_urls) | The generated URLs of the File shares. |
 | <a name="output_id"></a> [id](#output\_id) | The generated ID of the Storage Account. |
 | <a name="output_name"></a> [name](#output\_name) | The generated name of the Storage Account. |
 | <a name="output_primary_access_key"></a> [primary\_access\_key](#output\_primary\_access\_key) | The Primary access key of the Storage Account. |
 | <a name="output_primary_blob_endpoint"></a> [primary\_blob\_endpoint](#output\_primary\_blob\_endpoint) | The primary Blob endpoint. |
 | <a name="output_primary_connection_string"></a> [primary\_connection\_string](#output\_primary\_connection\_string) | The Storage Account primary connection string. |
+| <a name="output_random_suffix"></a> [random\_suffix](#output\_random\_suffix) | Randomized piece of the storage account name when "`add_random = true`". |
 | <a name="output_tags"></a> [tags](#output\_tags) | Storage Account tags. |
 
 <!-- END_TF_DOCS -->
