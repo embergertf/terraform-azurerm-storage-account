@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed -->
 
+## [1.1.1] - 2024-11-08 - Modified `blob_properties` to defaults
+
+### Modified
+
+- In `main.tf`: `blob_properties.versioning_enabled` and `blob_properties.change_feed_enabled` changed from `true` to `false`
+
 ## [1.1.0] - 2024-11-03 - Updated module version + added outputs
 
 ### Added
