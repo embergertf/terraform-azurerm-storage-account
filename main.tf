@@ -72,8 +72,8 @@ resource "azurerm_storage_account" "this" {
     container_delete_retention_policy {
       days = var.is_log_storage == true ? 365 : 7
     }
-    versioning_enabled  = true
-    change_feed_enabled = true
+    versioning_enabled  = false
+    change_feed_enabled = false
   }
 
   dynamic "identity" {
