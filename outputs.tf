@@ -11,6 +11,14 @@ output "id" {
   value       = azurerm_storage_account.this.id
   description = "The generated ID of the Storage Account."
 }
+output "resource_group_name" {
+  value       = azurerm_storage_account.this.resource_group_name
+  description = "The Resource Group for the Storage Account."
+}
+output "location" {
+  value       = azurerm_storage_account.this.location
+  description = "The location of the Storage Account."
+}
 output "tags" {
   value       = azurerm_storage_account.this.tags
   description = "Storage Account tags."
@@ -57,9 +65,7 @@ output "random_suffix" {
 }
 
 /*
-#
-# DEBUG
-#-------------------
+# ############################   Debug                ############################
 output "name" {
   value       = module.st_name.name
   description = "Storage Account name."
@@ -71,5 +77,13 @@ output "location" {
 output "random_suffix" {
   value       = module.st_name.random_suffix
   description = "Randomized piece of the Storage Account name when \"`add_random = true`\"."
+}
+output "naming_module_tags" {
+  value       = module.st_name.tags
+  description = "Naming module tags."
+}
+output "st_acct_tags" {
+  value       = azurerm_storage_account.this.tags
+  description = "Storage Account tags."
 }
 #*/
