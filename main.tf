@@ -68,13 +68,28 @@ resource "azurerm_storage_account" "this" {
 
   blob_properties {
     delete_retention_policy {
-      days = var.is_log_storage == true ? 365 : var.blobs_retention_policy
+      days                     = var.is_log_storage == true ? 365 : var.blobs_retention_policy
+      permanent_delete_enabled = false
     }
     container_delete_retention_policy {
       days = var.is_log_storage == true ? 365 : var.blobs_retention_policy
     }
     versioning_enabled  = var.blobs_versioning_enabled
     change_feed_enabled = var.blobs_change_feed_enabled
+  }
+
+  share_properties {
+    retention_policy {
+      days = var.blobs_retention_policy
+    }
+  }
+
+  queue_properties {
+    hour_metrics {
+      enabled               = true
+      version               = "1.0"
+      retention_policy_days = var.blobs_retention_policy
+    }
   }
 
   dynamic "identity" {
