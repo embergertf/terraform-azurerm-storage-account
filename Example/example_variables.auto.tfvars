@@ -35,6 +35,20 @@ naming_values = {
 add_random = null
 rnd_length = null
 
+rg_additional_tags = {
+  Added_by = "tfc_rg-module"
+}
+st_additional_tags = {
+  Added_by = "st_acct_module_localtest-module"
+}
+
+test_private_link_accesses = {
+  private_link_access_1 = {
+    endpoint_resource_id = "/subscriptions/fdfccf3e-6ee2-477e-bc8d-6d49645865e9/providers/Microsoft.Security/datascanners/StorageDataScanner"
+    endpoint_tenant_id   = "d9e18131-4646-473f-8881-7d14719150a4"
+  }
+}
+
 test_containers = {
   container1 = {
     name                  = "container1"

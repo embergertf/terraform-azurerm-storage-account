@@ -3,7 +3,7 @@
 #
 
 #--------------------------------------------------------------
-#   Provider to Test Subscription
+#   Provider Placeholder
 #--------------------------------------------------------------
 provider "azurerm" {
   # Reference: https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#argument-reference

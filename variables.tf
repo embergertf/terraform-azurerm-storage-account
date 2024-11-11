@@ -75,7 +75,7 @@ variable "owner" {
   default     = null
 }
 variable "additional_tags" {
-  description = "(Optional) Additional tags for the Resource Group."
+  description = "(Optional) Additional tags for the Storage Acount."
   type        = map(string)
   default     = null
 }
@@ -131,6 +131,14 @@ variable "is_log_storage" {
   description = "Set to `true`, if the `storage account` created to store `platform logs`."
   default     = false
 }
+variable "private_link_accesses" {
+  description = "(Optional) Map of Private Link accesses to create."
+  type = map(object({
+    endpoint_resource_id = string
+    endpoint_tenant_id   = string
+  }))
+  default = {}
+}
 
 # / Storage Account Security
 variable "network_rules" {
@@ -176,6 +184,21 @@ variable "containers" {
     name = string
   }))
   default = {}
+}
+variable "blobs_retention_policy" {
+  description = "(Optional) The retention policy for the blobs within the Storage Account.<br></br><ul><li>`days`: (Required) The number of days that the blob should be retained within [1..365].</li></ul>"
+  type        = number
+  default     = 7
+}
+variable "blobs_versioning_enabled" {
+  description = "(Optional) Is versioning enabled for the blobs within the Storage Account."
+  type        = bool
+  default     = false
+}
+variable "blobs_change_feed_enabled" {
+  description = "(Optional) Is blob change feed enabled for the blobs within the Storage Account."
+  type        = bool
+  default     = false
 }
 variable "blobs" {
   description = "(Optional) Map of the Storage Blobs in the Containers.<br></br><ul><li>`name`: (Required) The name of the storage blob. Must be unique within the storage container the blob is located, </li><li>`storage_container_name`: (Required) The name of the storage container in which this blob should be created, </li><li>`type`: (Required) The type of the storage blob to be created. Possible values are `Append`, `Block` or `Page`, </li><li>`size`: (Optional) Used only for page blobs to specify the size in bytes of the blob to be created. Must be a multiple of 512, </li><li>`content_type`: (Optional) The content type of the `storage blob`. Cannot be defined if `source_uri` is defined, </li><li>`parallelism`: (Optional) The number of workers per CPU core to run for concurrent uploads, </li><li>`source_uri`: (Optional) The URI of an existing blob, or a file in the Azure File service, to use as the source contents for the blob to be created, </li><li>`metadata`: (Optional) A map of custom blob metadata."

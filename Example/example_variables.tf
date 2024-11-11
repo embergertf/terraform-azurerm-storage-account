@@ -35,3 +35,14 @@ variable "naming_values" {
   default     = null
 }
 variable "test_containers" {}
+variable "rg_additional_tags" {}
+variable "st_additional_tags" {}
+
+variable "test_private_link_accesses" {
+  description = "(Optional) Map of Private Link accesses to create."
+  type = map(object({
+    endpoint_resource_id = string
+    endpoint_tenant_id   = string
+  }))
+  default = {}
+}
