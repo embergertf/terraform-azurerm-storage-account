@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Storage account `additional_tags` logic fixed
 - `blob_properties` now uses variables for `delete_retention_policy`, `container_delete_retention_policy`, `versioning_enabled`, `change_feed_enabled`
-- Added to `azurerm_storage_account_network_rules` a `private_link_access` dynamic block `
+- Added to `azurerm_storage_account_network_rules` a `private_link_access` dynamic block
 
 ## [1.1.1] - 2024-11-08 - Modified `blob_properties` to defaults
 
