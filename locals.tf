@@ -6,6 +6,7 @@
 #   Plan's Locals
 #--------------------------------------------------------------
 locals {
+  # Prepare for other sourcing logic of the Key vault ID
   key_vault_id = var.key_vault_id
 
   # Define the default open/Allow network rule
@@ -19,14 +20,15 @@ locals {
   network_rules = var.network_rules.default_action == "Allow" ? local.enabled_for_all_network : var.network_rules
 
   blobs = {
-    for b in var.blobs : b.name => merge({
-      type         = "Block"
-      size         = 0
-      content_type = "application/octet-stream"
-      source_file  = null
-      source_uri   = null
-      metadata     = {}
-    }, b)
+    for blob in var.blobs : blob.name => merge(
+      {
+        type         = "Block"
+        size         = 0
+        content_type = "application/octet-stream"
+        source_file  = null
+        source_uri   = null
+        metadata     = {}
+      },
+    blob)
   }
-
 }

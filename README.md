@@ -69,12 +69,15 @@ module "st" {
 | <a name="input_account_tier"></a> [account\_tier](#input\_account\_tier) | (Optional) The `account_tier`. | `string` | `"Standard"` | no |
 | <a name="input_add_random"></a> [add\_random](#input\_add\_random) | (Optional) When set to `true`, it will add a `rnd_length`'s long `random_number` at the name's end. | `bool` | `false` | no |
 | <a name="input_additional_name"></a> [additional\_name](#input\_additional\_name) | (Optional) Additional suffix to create resource uniqueness. It will be separated by a `'-'` from the "name's generated" suffix. Example: `lan1`. | `string` | `null` | no |
-| <a name="input_additional_tags"></a> [additional\_tags](#input\_additional\_tags) | (Optional) Additional tags for the Resource Group. | `map(string)` | `null` | no |
+| <a name="input_additional_tags"></a> [additional\_tags](#input\_additional\_tags) | (Optional) Additional tags for the Storage Acount. | `map(string)` | `null` | no |
 | <a name="input_allowed_public_ip_addresses"></a> [allowed\_public\_ip\_addresses](#input\_allowed\_public\_ip\_addresses) | List of public IP addresses that are allowed to access the storage account. | `list(string)` | `[]` | no |
 | <a name="input_allowed_subnet_id_s"></a> [allowed\_subnet\_id\_s](#input\_allowed\_subnet\_id\_s) | List of subnet IDs that are allowed to access the storage account. | `list(string)` | `[]` | no |
 | <a name="input_assign_identity"></a> [assign\_identity](#input\_assign\_identity) | (Optional) Set to `true`, the Storage Account will be assigned an identity. | `bool` | `false` | no |
 | <a name="input_base_name"></a> [base\_name](#input\_base\_name) | (Optional) Resource "base" name. Example: `aks`. | `string` | `null` | no |
 | <a name="input_blobs"></a> [blobs](#input\_blobs) | (Optional) Map of the Storage Blobs in the Containers.<br></br><ul><li>`name`: (Required) The name of the storage blob. Must be unique within the storage container the blob is located, </li><li>`storage_container_name`: (Required) The name of the storage container in which this blob should be created, </li><li>`type`: (Required) The type of the storage blob to be created. Possible values are `Append`, `Block` or `Page`, </li><li>`size`: (Optional) Used only for page blobs to specify the size in bytes of the blob to be created. Must be a multiple of 512, </li><li>`content_type`: (Optional) The content type of the `storage blob`. Cannot be defined if `source_uri` is defined, </li><li>`parallelism`: (Optional) The number of workers per CPU core to run for concurrent uploads, </li><li>`source_uri`: (Optional) The URI of an existing blob, or a file in the Azure File service, to use as the source contents for the blob to be created, </li><li>`metadata`: (Optional) A map of custom blob metadata. | <pre>map(object({<br>    name                   = string<br>    storage_container_name = string<br>    type                   = string<br>    size                   = number<br>    content_type           = string<br>    parallelism            = number<br>    source_uri             = string<br>    metadata               = map(any)<br>  }))</pre> | `{}` | no |
+| <a name="input_blobs_change_feed_enabled"></a> [blobs\_change\_feed\_enabled](#input\_blobs\_change\_feed\_enabled) | (Optional) Is blob change feed enabled for the blobs within the Storage Account. | `bool` | `false` | no |
+| <a name="input_blobs_retention_policy"></a> [blobs\_retention\_policy](#input\_blobs\_retention\_policy) | (Optional) The retention policy for the blobs within the Storage Account.<br></br><ul><li>`days`: (Required) The number of days that the blob should be retained within [1..365].</li></ul> | `number` | `7` | no |
+| <a name="input_blobs_versioning_enabled"></a> [blobs\_versioning\_enabled](#input\_blobs\_versioning\_enabled) | (Optional) Is versioning enabled for the blobs within the Storage Account. | `bool` | `false` | no |
 | <a name="input_cmk_enabled"></a> [cmk\_enabled](#input\_cmk\_enabled) | (Optional) Set `true` to enable Storage encryption with `Customer-managed key`. Variable `assign_identity` needs to be set `true` to set `cmk_enabled` true. | `bool` | `false` | no |
 | <a name="input_containers"></a> [containers](#input\_containers) | (Optional) Map of the Containers in the Storage Account.<br></br><ul><li>`name`: (Required) The name of the Container which should be created within the Storage Account. | <pre>map(object({<br>    name = string<br>  }))</pre> | `{}` | no |
 | <a name="input_env"></a> [env](#input\_env) | (Optional) Environment code. Example: `test`. <br></br>&#8226; Value of `env` examples can be: `[nonprod,prod,core,int,uat,stage,dev,test]`. | `string` | `null` | no |
@@ -89,6 +92,7 @@ module "st" {
 | <a name="input_nfsv3_enabled"></a> [nfsv3\_enabled](#input\_nfsv3\_enabled) | Set to `true`, the `NFSV3` protocol will be enabled. | `bool` | `false` | no |
 | <a name="input_owner"></a> [owner](#input\_owner) | (Optional) Deployed resources owner. | `string` | `null` | no |
 | <a name="input_persist_access_key"></a> [persist\_access\_key](#input\_persist\_access\_key) | (Optional) Set `true` to store storage access key in `key vault`. | `bool` | `false` | no |
+| <a name="input_private_link_accesses"></a> [private\_link\_accesses](#input\_private\_link\_accesses) | (Optional) Map of Private Link accesses to create. | <pre>map(object({<br>    endpoint_resource_id = string<br>    endpoint_tenant_id   = string<br>  }))</pre> | `{}` | no |
 | <a name="input_queues"></a> [queues](#input\_queues) | (Optional) Map of the Storage Queues.<br></br><ul><li>`name`: (Required) The name of the Queue which should be created within the Storage Account. Must be unique within the storage account the queue is located, </li><li>`metadata`: (Optional) A mapping of MetaData which should be assigned to this Storage Queue. | <pre>map(object({<br>    name     = string<br>    metadata = map(any)<br>  }))</pre> | `{}` | no |
 | <a name="input_region_code"></a> [region\_code](#input\_region\_code) | (Optional) Resource region code. Must be compatible with base module. Example: `cac`. | `string` | `null` | no |
 | <a name="input_rnd_length"></a> [rnd\_length](#input\_rnd\_length) | (Optional) Set the length of the `random_number` generated. | `number` | `2` | no |
@@ -120,11 +124,13 @@ module "st" {
 | <a name="output_file_share_ids"></a> [file\_share\_ids](#output\_file\_share\_ids) | The generated IDs of the File shares. |
 | <a name="output_file_share_urls"></a> [file\_share\_urls](#output\_file\_share\_urls) | The generated URLs of the File shares. |
 | <a name="output_id"></a> [id](#output\_id) | The generated ID of the Storage Account. |
+| <a name="output_location"></a> [location](#output\_location) | The location of the Storage Account. |
 | <a name="output_name"></a> [name](#output\_name) | The generated name of the Storage Account. |
 | <a name="output_primary_access_key"></a> [primary\_access\_key](#output\_primary\_access\_key) | The Primary access key of the Storage Account. |
 | <a name="output_primary_blob_endpoint"></a> [primary\_blob\_endpoint](#output\_primary\_blob\_endpoint) | The primary Blob endpoint. |
 | <a name="output_primary_connection_string"></a> [primary\_connection\_string](#output\_primary\_connection\_string) | The Storage Account primary connection string. |
 | <a name="output_random_suffix"></a> [random\_suffix](#output\_random\_suffix) | Randomized piece of the storage account name when "`add_random = true`". |
+| <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | The Resource Group for the Storage Account. |
 | <a name="output_tags"></a> [tags](#output\_tags) | Storage Account tags. |
 
 <!-- END_TF_DOCS -->

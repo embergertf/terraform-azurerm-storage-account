@@ -13,6 +13,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed -->
 
+## [1.2.0] - 2024-11-11 - Added `private_link_access` block + fixed `additional_tags` logic
+
+### Added
+
+- Variables:
+  - `private_link_accesses` (default: `{}`)
+  - `blobs_retention_policy` (default: `7`)
+  - `blobs_versioning_enabled` (default: `false`)
+  - `blobs_change_feed_enabled` (default: `false`)
+
+- Outputs:
+  - `resource_group_name`
+  - `location`
+  - in DEBUG mode:
+    - `naming_module_tags`
+    - `st_acct_tags`
+
+### Modified
+
+- Storage account `additional_tags` logic fixed
+- `blob_properties` now uses variables for `delete_retention_policy`, `container_delete_retention_policy`, `versioning_enabled`, `change_feed_enabled`
+- Added to `azurerm_storage_account_network_rules` a `private_link_access` dynamic block
+
 ## [1.1.1] - 2024-11-08 - Modified `blob_properties` to defaults
 
 ### Modified

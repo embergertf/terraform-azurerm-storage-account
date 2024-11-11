@@ -24,6 +24,7 @@ module "st_name" {
   source  = "app.terraform.io/embergertf/base/azurerm"
   version = "~> 4.0"
 
+  # Naming
   name_override = var.name_override
   naming_values = var.naming_values
 
@@ -67,13 +68,13 @@ resource "azurerm_storage_account" "this" {
 
   blob_properties {
     delete_retention_policy {
-      days = var.is_log_storage == true ? 365 : 7
+      days = var.is_log_storage == true ? 365 : var.blobs_retention_policy
     }
     container_delete_retention_policy {
-      days = var.is_log_storage == true ? 365 : 7
+      days = var.is_log_storage == true ? 365 : var.blobs_retention_policy
     }
-    versioning_enabled  = false
-    change_feed_enabled = false
+    versioning_enabled  = var.blobs_versioning_enabled
+    change_feed_enabled = var.blobs_change_feed_enabled
   }
 
   dynamic "identity" {
@@ -83,7 +84,7 @@ resource "azurerm_storage_account" "this" {
     }
   }
 
-  tags = module.st_name.tags
+  tags = merge(module.st_name.tags, var.additional_tags)
 
   lifecycle {
     ignore_changes = [
@@ -96,9 +97,8 @@ resource "azurerm_storage_account" "this" {
 }
 
 #---------------------------------------------------------
-# - Store Storage Account Access Key to Key Vault Secrets
+# - if (persist_access_key) store Storage Account Access Key in a Key vault Secret
 #---------------------------------------------------------
-# Data Protection: Protect data in Storage account using Customer-managed keys in associated Key-Vault or Managed HSM.
 resource "azurerm_key_vault_secret" "this" {
   count = var.persist_access_key == true ? 1 : 0
 
@@ -111,7 +111,7 @@ resource "azurerm_key_vault_secret" "this" {
 
 ################################  CMK and Encryption  ################################
 #-------------------------------------------------------------------------------------------------
-# - Assigning Key Vault Crypto Service Encryption User to system assigned through a Role Assignment
+# - if (cmk_enabled) assign "Key vault Crypto Service Encryption User" role to Storage account system assigned on Key vault
 #-------------------------------------------------------------------------------------------------
 module "st_on_kv_ra" {
   source  = "app.terraform.io/embergertf/role-assignment/azurerm"
@@ -125,7 +125,7 @@ module "st_on_kv_ra" {
 }
 
 #--------------------------------------
-# - Create CMK Key for storage account
+# - if (cmk_enabled) create CMK Key for storage account
 #--------------------------------------
 # Data Protection: Protect data in Storage account using Customer-managed keys in associated Key-Vault or Managed HSM.
 resource "azurerm_key_vault_key" "this" {
@@ -145,7 +145,7 @@ resource "azurerm_key_vault_key" "this" {
 }
 
 #--------------------------------------------------------------
-# - Assigning CMK with the key in Key vault to storage account
+# - if (cmk_enabled) assign CMK with the key in Key vault to storage account
 #--------------------------------------------------------------
 resource "azurerm_storage_account_customer_managed_key" "this" {
   count = var.cmk_enabled == true ? 1 : 0
@@ -258,5 +258,13 @@ resource "azurerm_storage_account_network_rules" "this" {
   ip_rules                   = local.network_rules.ip_rules
   virtual_network_subnet_ids = local.network_rules.virtual_network_subnet_ids
   bypass                     = local.network_rules.bypass
+
+  dynamic "private_link_access" {
+    for_each = var.private_link_accesses != null ? var.private_link_accesses : {}
+    content {
+      endpoint_resource_id = private_link_access.value.endpoint_resource_id
+      endpoint_tenant_id   = private_link_access.value.endpoint_tenant_id
+    }
+  }
 }
 

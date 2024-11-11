@@ -27,7 +27,7 @@ module "tfc_rg" {
   # add_random = var.add_random
   # rnd_length = var.rnd_length
 
-  # additional_tags = var.additional_tags
+  additional_tags = var.rg_additional_tags
 }
 
 module "publicip" {
@@ -35,23 +35,33 @@ module "publicip" {
   version = "~> 1.0"
 }
 
-module "local_rg_region1" {
+module "st_acct_module_localtest" {
   # Local use
   source = "../../terraform-azurerm-storage-account"
 
   # Naming convention
-  naming_values = var.naming_values
+  naming_values = module.tfc_rg.naming_values
 
   # Storage settings
   resource_group_name = module.tfc_rg.resource_group_name
   assign_identity     = true
 
+  # Blob settings
+  blobs_versioning_enabled  = false
+  blobs_retention_policy    = 1
+  blobs_change_feed_enabled = true
+
   containers = var.test_containers
+
+  # Security settings
   network_rules = {
     default_action             = "Deny"
     ip_rules                   = [module.publicip.public_ip]
     virtual_network_subnet_ids = []
     bypass                     = ["None"]
   }
+  private_link_accesses = var.test_private_link_accesses
+
+  additional_tags = var.st_additional_tags
 }
 #*/
