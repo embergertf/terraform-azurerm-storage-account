@@ -35,6 +35,7 @@ module "st_name" {
   additional_name = var.additional_name
   iterator        = var.iterator
   owner           = var.owner
+  additional_tags = var.additional_tags
 
   # Random
   add_random = var.add_random
@@ -68,13 +69,28 @@ resource "azurerm_storage_account" "this" {
 
   blob_properties {
     delete_retention_policy {
-      days = var.is_log_storage == true ? 365 : var.blobs_retention_policy
+      days                     = var.is_log_storage == true ? 365 : var.blobs_retention_policy
+      permanent_delete_enabled = false
     }
     container_delete_retention_policy {
       days = var.is_log_storage == true ? 365 : var.blobs_retention_policy
     }
     versioning_enabled  = var.blobs_versioning_enabled
     change_feed_enabled = var.blobs_change_feed_enabled
+  }
+
+  share_properties {
+    retention_policy {
+      days = var.blobs_retention_policy
+    }
+  }
+
+  queue_properties {
+    hour_metrics {
+      enabled               = true
+      version               = "1.0"
+      retention_policy_days = var.blobs_retention_policy
+    }
   }
 
   dynamic "identity" {
@@ -84,7 +100,7 @@ resource "azurerm_storage_account" "this" {
     }
   }
 
-  tags = merge(module.st_name.tags, var.additional_tags)
+  tags = module.st_name.tags
 
   lifecycle {
     ignore_changes = [
@@ -100,13 +116,15 @@ resource "azurerm_storage_account" "this" {
 # - if (persist_access_key) store Storage Account Access Key in a Key vault Secret
 #---------------------------------------------------------
 resource "azurerm_key_vault_secret" "this" {
+  depends_on = [module.st_on_kv_ra]
+
   count = var.persist_access_key == true ? 1 : 0
 
   name         = "${azurerm_storage_account.this.name}-access-key"
   value        = azurerm_storage_account.this.primary_access_key
   key_vault_id = local.key_vault_id
 
-  depends_on = [module.st_on_kv_ra]
+  tags = module.st_name.tags
 }
 
 ################################  CMK and Encryption  ################################
@@ -129,6 +147,8 @@ module "st_on_kv_ra" {
 #--------------------------------------
 # Data Protection: Protect data in Storage account using Customer-managed keys in associated Key-Vault or Managed HSM.
 resource "azurerm_key_vault_key" "this" {
+  depends_on = [azurerm_storage_account.this, module.st_on_kv_ra]
+
   count = var.cmk_enabled == true ? 1 : 0
 
   name         = format("%s-key", azurerm_storage_account.this.name)
@@ -141,7 +161,7 @@ resource "azurerm_key_vault_key" "this" {
     "unwrapKey", "verify", "wrapKey"
   ]
 
-  depends_on = [azurerm_storage_account.this, module.st_on_kv_ra]
+  tags = module.st_name.tags
 }
 
 #--------------------------------------------------------------
@@ -162,6 +182,8 @@ resource "azurerm_storage_account_customer_managed_key" "this" {
 #------------------------------
 # PR-112 Inventory: Blob storage has an inventory capability 
 resource "azurerm_storage_container" "this" {
+  depends_on = [azurerm_storage_container.this]
+
   for_each = var.containers
 
   name                 = each.value["name"]
@@ -175,6 +197,8 @@ resource "azurerm_storage_container" "this" {
 # - Container Blobs
 #-----------------------------------
 resource "azurerm_storage_blob" "this" {
+  depends_on = [azurerm_storage_container.this]
+
   for_each = local.blobs
 
   name                   = each.value["name"]
@@ -186,31 +210,27 @@ resource "azurerm_storage_blob" "this" {
   source_uri             = lookup(each.value, "source_uri", null)
   metadata               = lookup(each.value, "metadata", null)
   parallelism            = lookup(each.value, "parallelism", 8)
-
-  depends_on = [
-    azurerm_storage_container.this
-  ]
 }
 
 #--------------------------
 # - Queues
 #--------------------------
 resource "azurerm_storage_queue" "this" {
+  depends_on = [azurerm_storage_container.this]
+
   for_each = var.queues
 
   name                 = each.value["name"]
   storage_account_name = azurerm_storage_account.this.name
   metadata             = lookup(each.value, "metadata", null)
-
-  depends_on = [
-    azurerm_storage_container.this
-  ]
 }
 
 #-------------------------------
 # - File Shares
 #-------------------------------
 resource "azurerm_storage_share" "this" {
+  depends_on = [azurerm_storage_container.this]
+
   for_each = var.file_shares
 
   name                 = each.value["name"]
@@ -219,23 +239,18 @@ resource "azurerm_storage_share" "this" {
   enabled_protocol     = lookup(each.value, "enabled_protocol", "SMB")
   metadata             = lookup(each.value, "metadata", null)
   access_tier          = lookup(each.value, "access_tier", "TransactionOptimized") #default = TransactionOptimized. Other= Hot, Cool
-
-  depends_on = [
-    azurerm_storage_container.this
-  ]
 }
 
 #--------------------------
 # - Tables
 #--------------------------
 resource "azurerm_storage_table" "this" {
+  depends_on = [azurerm_storage_container.this]
+
   for_each = var.tables
 
   name                 = each.value["name"]
   storage_account_name = azurerm_storage_account.this.name
-  depends_on = [
-    azurerm_storage_container.this
-  ]
 }
 
 

@@ -13,6 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed -->
 
+## [1.2.1] - 2024-11-14 - Modified `azurerm_storage_account` & `additional_tags` processing
+
+### Modified
+
+- `additional_tags` processing moved to base module
+- Added to `azurerm_storage_account`:
+  - `blob_properties.delete_retention_policy.permanent_delete_enabled` = `true`
+  - `share_properties` block
+  - `queue_properties` block
+
 ## [1.2.0] - 2024-11-11 - Added `private_link_access` block + fixed `additional_tags` logic
 
 ### Added
