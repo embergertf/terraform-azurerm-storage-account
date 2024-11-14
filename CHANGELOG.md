@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed -->
 
+## [1.2.2] - 2024-11-14 - Cycle error fix
+
+### Modified
+
+- Removed `depends_on = [azurerm_storage_container.this]` from `azurerm_storage_container` resource
+
 ## [1.2.1] - 2024-11-14 - Modified `azurerm_storage_account` & `additional_tags` processing
 
 ### Modified
