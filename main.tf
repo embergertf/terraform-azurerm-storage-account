@@ -182,8 +182,6 @@ resource "azurerm_storage_account_customer_managed_key" "this" {
 #------------------------------
 # PR-112 Inventory: Blob storage has an inventory capability 
 resource "azurerm_storage_container" "this" {
-  depends_on = [azurerm_storage_container.this]
-
   for_each = var.containers
 
   name                 = each.value["name"]
